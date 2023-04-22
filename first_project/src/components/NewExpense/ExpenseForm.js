@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './ExpenseForm.css';
 
-const ExpenseForm = () => {
+const ExpenseForm = (props) => {
 
     // the way with multiple states
     const [enterdTitle, setEnteredTitle] = useState('');
@@ -46,7 +46,11 @@ const ExpenseForm = () => {
             title: enterdTitle,
             amount: enteredAmount,
             date: new Date(enteredDate),
-        }
+        };
+        
+        // !IMPORTANT design pattern - lift the state up
+        // execute the passed function, dependency injection (?)
+        props.onSaveExpenseData(expenseData); // pass in the generated data to outside function
 
         setEnteredTitle('');
         setEnteredAmount('');
