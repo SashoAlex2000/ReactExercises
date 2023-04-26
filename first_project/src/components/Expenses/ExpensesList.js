@@ -10,7 +10,7 @@ const ExpensesList = (props) => {
         </h2> 
     }
 
-    return <ul className="expensese-list">
+    return <ul className="expenses-list">
         {props.items.map(expense => <ExpenseItem
             // add a unique key, otherwise the rendering is unefficient 
             // and it could lead to bugs when rendering stateful componens
