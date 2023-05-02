@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
-import Login from './components/Login/LoginWithReducer';
+import Login from './components/Login/LoginWithInput';
 import Home from './components/Home/Home';
 import MainHeader from './components/MainHeader/MainHeader';
+import AuthContext from './store/auth-context';
 
-function App() {
+
+
+function OLDApp() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 
@@ -19,8 +22,7 @@ function App() {
   }, []) // with an empty array of dependencies it runs once (on refresh)
 
   const loginHandler = (email, password) => {
-    // We should of course check email and password
-    // But it's just a dummy/ demo anyways
+    
     localStorage.setItem('isLoggedIn', '1');
 
     setIsLoggedIn(true);
@@ -32,14 +34,39 @@ function App() {
   };
 
   return (
-    <React.Fragment>
-      <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
-      <main>
-        {!isLoggedIn && <Login onLogin={loginHandler} />}
-        {isLoggedIn && <Home onLogout={logoutHandler} />}
-      </main>
-    </React.Fragment>
+    
+      <AuthContext.Provider value={{
+        isLoggedIn: isLoggedIn,
+        onLogout: logoutHandler,
+      }}> {/* wrap the context around all that will need it */}
+        <MainHeader/>
+        <main>
+          {!isLoggedIn && <Login onLogin={loginHandler} />}
+          {isLoggedIn && <Home onLogout={logoutHandler} />}
+        </main>
+      </AuthContext.Provider>
+    
   );
+}
+
+function App () {
+
+  const ctx = useContext(AuthContext);
+
+  return (
+  // in this way, App is wrapped with a Auth Context Provider, and properties / functions, which 
+  // are needed here or down the chain, are received through AuthContext;
+  // NOT optimized for frequent state changes
+  <React.Fragment>
+    <MainHeader/>
+        <main>
+          {!ctx.isLoggedIn && <Login />}
+          {ctx.isLoggedIn && <Home />}
+        </main>
+  </React.Fragment>
+  );
+
+  
 }
 
 export default App;

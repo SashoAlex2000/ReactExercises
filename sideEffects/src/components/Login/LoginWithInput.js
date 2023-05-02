@@ -4,6 +4,7 @@ import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 import AuthContext from '../../store/auth-context';
+import Input from '../UI/Input/Input';
 
 // created outside of the componenct function, since we won't need any data from it
 // manage email state in one place 
@@ -83,15 +84,15 @@ const Login = (props) => {
             )
         }, 500)
             ;
-        return () => { 
+        return () => {
             clearTimeout(timer);
         }
-    }, [setFormIsValid, 
+    }, [setFormIsValid,
         // emailState,
         // passwordState,
         emailIsValid, // renders the effect only when the validiy changes (tru <-> false)
         passwordIsValid,
-    ]); 
+    ]);
 
     const emailChangeHandler = (event) => {
         dispatchEmail({
@@ -130,36 +131,32 @@ const Login = (props) => {
         event.preventDefault();
         authCtx.onLogin(emailState.value, passwordState.value);
     };
+    
 
     return (
         <Card className={classes.login}>
             <form onSubmit={submitHandler}>
-                <div
-                    className={`${classes.control} ${emailState.isValid === false ? classes.invalid : ''
-                        }`}
+                
+                <Input 
+                id="email" 
+                label="E-mail" 
+                type="email" 
+                isValid={emailIsValid}
+                value={emailState.value} 
+                onChange={emailChangeHandler} 
+                onBlur={validateEmailHandler}
                 >
-                    <label htmlFor="email">E-Mail</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={emailState.value}
-                        onChange={emailChangeHandler}
-                        onBlur={validateEmailHandler}
-                    />
-                </div>
-                <div
-                    className={`${classes.control} ${passwordState.isValid === false ? classes.invalid : ''
-                        }`}
+                </Input>
+                <Input 
+                id="password" 
+                label="P455" 
+                type="password" 
+                isValid={passwordIsValid}
+                value={passwordState.value} 
+                onChange={passwordChangeHandler} 
+                onBlur={validatePasswordHandler}
                 >
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={passwordState.value}
-                        onChange={passwordChangeHandler}
-                        onBlur={validatePasswordHandler}
-                    />
-                </div>
+                </Input>
                 <div className={classes.actions}>
                     <Button type="submit" className={classes.btn} disabled={!formIsValid}>
                         Login
