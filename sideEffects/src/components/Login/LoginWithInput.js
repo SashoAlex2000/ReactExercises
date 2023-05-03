@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useContext } from 'react';
+import React, { useState, useEffect, useReducer, useContext, useRef } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
@@ -72,6 +72,9 @@ const Login = (props) => {
 
     const authCtx = useContext(AuthContext);
 
+    const usenameRef = useRef();
+    const passwordRef = useRef();
+
     // PUT ONLY THE VALIDITY to be checked from the state 
     const { isValid: emailIsValid } = emailState;
     const { isValid: passwordIsValid } = passwordState;
@@ -129,7 +132,14 @@ const Login = (props) => {
 
     const submitHandler = (event) => {
         event.preventDefault();
-        authCtx.onLogin(emailState.value, passwordState.value);
+        if (formIsValid) {
+            authCtx.onLogin(emailState.value, passwordState.value);
+        } else if (!emailIsValid) {
+            usenameRef.current.focus();
+        } else if (!passwordIsValid) {
+            passwordRef.current.focus();
+        }
+        
     };
     
 
@@ -145,6 +155,7 @@ const Login = (props) => {
                 value={emailState.value} 
                 onChange={emailChangeHandler} 
                 onBlur={validateEmailHandler}
+                ref={usenameRef}
                 >
                 </Input>
                 <Input 
@@ -155,10 +166,14 @@ const Login = (props) => {
                 value={passwordState.value} 
                 onChange={passwordChangeHandler} 
                 onBlur={validatePasswordHandler}
+                ref={passwordRef}
                 >
                 </Input>
                 <div className={classes.actions}>
-                    <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+                    {/* <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+                        Login
+                    </Button> */}
+                    <Button type="submit" className={classes.btn}>
                         Login
                     </Button>
                 </div>
