@@ -34,7 +34,8 @@ const STATIC_DUMMY_MEALS = [
 
 const AvailableMeals = () => {
 
-    const mealList = STATIC_DUMMY_MEALS.map(meal => <MealItem 
+    const mealList = STATIC_DUMMY_MEALS.map(meal => <MealItem
+    id={meal.id} 
     key={meal.id}
     name={meal.name}
     description={meal.description}
