@@ -1,12 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import classes from './Cart.module.css';
 import Modal from "../UI/Modal";
 import CartContext from "../../store/cart-context";
 import CartItem from './CartItem';
+import Checkout from "./Checkout";
 
 const Cart = (props) => {
 
-    const cartCTX = useContext(CartContext);
+    const [shouldShowCheckout, setShouldShowCheckout] = useState();
+    const cartCTX = useContext(CartContext); 
 
     const totalAmount = `$${cartCTX.totalAmount.toFixed(2)}`;
     const hasItems = cartCTX.items.length > 0;
@@ -35,10 +37,18 @@ const Cart = (props) => {
         name={item.name}
         amount={item.amount}
         price={item.price}
-        onRemove={cartItemRemoveHandler.bind(null, item.id)}
-        onAdd={cartItemAddHandler.bind(null, item)}
-        />)
+        onRemove={cartItemRemoveHandler.bind(null, item.id)} // bind preconfigures the function for execution
+        onAdd={cartItemAddHandler.bind(null, item)}          // added here to ensure the child component 
+        />)                                                  // calls it with correct data   
     }</ul>;
+
+    const orderHandler = () => {
+        setShouldShowCheckout(true);
+    };
+
+    const cancelOrderHandler = () => {
+        setShouldShowCheckout(false);
+    }
 
     return <Modal onClose={props.onCloseCart}>
         {cartItems}
@@ -46,9 +56,11 @@ const Cart = (props) => {
             <span>Total Amount</span>
             <span>{totalAmount}</span>
         </div>
+        {shouldShowCheckout && <Checkout onCancel={cancelOrderHandler} />}
         <div className={classes['actions']}>
-            <button className={classes['button--alt']} onClick={props.onCloseCart}>Close</button>
-            {hasItems && <button className={classes.button}>Order</button>}
+            
+            {!shouldShowCheckout && <button className={classes['button--alt']} onClick={props.onCloseCart}>Close</button>}
+            {hasItems && !shouldShowCheckout && <button className={classes.button} onClick={orderHandler}>Order</button>}
         </div>
     </Modal>
 }
