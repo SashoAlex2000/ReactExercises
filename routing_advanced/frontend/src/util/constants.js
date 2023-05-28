@@ -1,0 +1,1 @@
+export const EVENTS_API_URL = 'http://localhost:8080/events/';
