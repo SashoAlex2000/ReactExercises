@@ -1,6 +1,7 @@
-import { Form, useActionData, useNavigate, useNavigation } from 'react-router-dom';
+import { Form, json, redirect, useActionData, useNavigate, useNavigation } from 'react-router-dom';
 
 import classes from './EventForm.module.css';
+import { EVENTS_API_URL } from '../util/constants';
 
 function EventForm({ method, event }) {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ function EventForm({ method, event }) {
 
     return (
         // 'Form' from React Router ommits the default behaviour and sends submitted form to 'actions'
-        <Form method='post' className={classes.form}>
+        <Form method={method} className={classes.form}>
             {actionData && actionData.errors && <ul>
                 {Object.values(actionData.errors).map(err=> <li key={err}>
                     {err}
@@ -55,3 +56,47 @@ function EventForm({ method, event }) {
 }
 
 export default EventForm;
+
+export async function action ({request, params}) {
+
+    const method = request.method;
+
+    const data = await request.formData();
+    const eventData = {
+        title: data.get('title'),
+        image: data.get('image'),
+        date: data.get('date'),
+        description: data.get('description'),
+    };
+
+    let currUrl = EVENTS_API_URL;
+
+    if (method==="PATCH") {
+        const eventId = params.eventId;
+        currUrl += `/${eventId}`;
+    }
+
+    const response = await fetch(currUrl, {
+        method: method, // set the method dynamically for reusability
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(eventData),
+    });
+
+    if (response.status === 422) {
+        return response;
+    };
+
+    if (!response.ok) {
+        throw json({
+            message: 'Data could not be saved '
+        }, {
+            status: 500,
+        })
+    };
+
+    return redirect('/events');
+
+}
+
