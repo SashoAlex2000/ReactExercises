@@ -1,2 +1,4 @@
 node_modules
 *.txt
+SECRET_KEY.js
+.next
